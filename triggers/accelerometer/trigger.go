@@ -263,7 +263,7 @@ func (t *MyTrigger) readData() {
 					log.Debugf("ActionID: '%s'", handler.ActionId)
 
 					req := t.constructStartRequest(accelData)
-					startAttrs, _ := t.metadata.OutputsToAttrs(req, false)
+					startAttrs, _ := t.metadata.OutputsToAttrs(req.Data, false)
 
 					context := trigger.NewContext(context.Background(), startAttrs)
 					_, _, err := t.runner.Run(context, act, handler.ActionId, nil)
