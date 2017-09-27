@@ -4,13 +4,7 @@
   "type": "flogo:trigger",
   "description": "trigger description",
   "author": "Your Name <you.name@example.org>",
-  "settings":[
-    {
-      "name": "setting",
-      "type": "string",
-      "value": "default"
-    }
-  ],
+  "settings":[],
   "outputs": [
     {
       "name": "accelerometer",
@@ -18,11 +12,6 @@
     }
   ],
   "handler": {
-    "settings": [
-      {
-        "name": "handler_setting",
-        "type": "string"
-      }
-    ]
+    "settings": []
   }
 }

@@ -283,7 +283,7 @@ func (t *MyTrigger) readData() {
 	}
 }
 
-func (t *MyTrigger) constructStartRequest(message interface{}) *StartRequest {
+func (t *MyTrigger) constructStartRequest(message [][3]float32) *StartRequest {
 	//TODO how to handle reply to, reply feature
 	req := &StartRequest{}
 	data := make(map[string]interface{})
