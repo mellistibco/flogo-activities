@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"sync"
@@ -12,6 +13,7 @@ import (
 	"github.com/TIBCOSoftware/flogo-lib/core/action"
 	"github.com/TIBCOSoftware/flogo-lib/core/trigger"
 	i2c "github.com/davecheney/i2c"
+	"github.com/gorilla/websocket"
 	"github.com/mellistibco/flogo-contrib/action/flow/support"
 	logging "github.com/op/go-logging"
 )
@@ -101,6 +103,12 @@ type Acceleration struct {
 	data [3]float32 /* mg */
 }
 
+type Message struct {
+	Walking  float64 `json:"walking"`
+	Standing float64 `json:"standing"`
+	Jogging  float64 `json:"jogging"`
+}
+
 func NewAdxl345(address uint8, device int) (*Adxl345, error) {
 	adxl := Adxl345{
 		device:  device,
@@ -122,7 +130,7 @@ func (adxl *Adxl345) Init() {
 	}
 
 	adxl.setRegister(regDataFormat, dataFormatRange16g|dataFormatFullRes)
-	adxl.setRegister(regBWRate, bwRate200)
+	adxl.setRegister(regBWRate, bwRate400)
 	adxl.setRegister(regPowerCtl, powerCtlMeasure)
 }
 
@@ -221,9 +229,18 @@ func (t *MyTrigger) readData() {
 	adxl, _ := NewAdxl345(0x53, 1)
 	adxl.Init()
 	var tmpResults [][3]float32
-	var accelData [][3]float32
+	var accelData [][]float64
 
 	ticker := time.NewTicker(time.Millisecond * 50).C
+
+	URL := "ws://192.168.1.6:8099/"
+
+	var dialer *websocket.Dialer
+	conn, _, err := dialer.Dial(URL, nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	for {
 		select {
@@ -232,16 +249,16 @@ func (t *MyTrigger) readData() {
 
 			if len(tmpResults) > 0 {
 
-				var totalX float32
-				var totalY float32
-				var totalZ float32
+				var totalX float64
+				var totalY float64
+				var totalZ float64
 				for _, value := range tmpResults {
-					totalX += value[0] / 100
-					totalY += value[1] / 100
-					totalZ += value[2] / 100
+					totalX += float64(value[0]) / 100
+					totalY += float64(value[1]) / 100
+					totalZ += float64(value[2]) / 100
 				}
 
-				accelData = append(accelData, [3]float32{totalX / float32(len(tmpResults)), totalY / float32(len(tmpResults)), totalZ / float32(len(tmpResults))})
+				accelData = append(accelData, []float64{totalX / float64(len(tmpResults)), totalY / float64(len(tmpResults)), totalZ / float64(len(tmpResults))})
 
 				// Clear slice
 				tmpResults = tmpResults[:0]
@@ -265,11 +282,38 @@ func (t *MyTrigger) readData() {
 					req := t.constructStartRequest(accelData)
 					startAttrs, _ := t.metadata.OutputsToAttrs(req.Data, false)
 
+					log.Info(req.Data)
+
 					context := trigger.NewContext(context.Background(), startAttrs)
-					_, _, err := t.runner.Run(context, act, handler.ActionId, nil)
+					_, respData, err := t.runner.Run(context, act, handler.ActionId, nil)
 					if err != nil {
 						log.Critical(err.Error)
 					}
+
+					finalData := respData.(map[string]interface{})
+					var walking, standing, jogging float64
+
+					for i := 0; i < len(finalData["classes"].([][]string)[0]); i++ {
+
+						if finalData["classes"].([][]string)[0][i] == "Walking" {
+							walking = float64(finalData["scores"].([][]float32)[0][i])
+						}
+						if finalData["classes"].([][]string)[0][i] == "Standing" {
+							standing = float64(finalData["scores"].([][]float32)[0][i])
+						}
+						if finalData["classes"].([][]string)[0][i] == "Jogging" {
+							jogging = float64(finalData["scores"].([][]float32)[0][i])
+						}
+					}
+
+					// Publish response from flow
+					msg := Message{
+						Walking:  walking,
+						Standing: standing,
+						Jogging:  jogging,
+					}
+					b, _ := json.Marshal(msg)
+					conn.WriteMessage(websocket.TextMessage, b)
 				}
 
 				// Clear the slice
@@ -283,7 +327,7 @@ func (t *MyTrigger) readData() {
 	}
 }
 
-func (t *MyTrigger) constructStartRequest(message [][3]float32) *StartRequest {
+func (t *MyTrigger) constructStartRequest(message [][]float64) *StartRequest {
 	//TODO how to handle reply to, reply feature
 	req := &StartRequest{}
 	data := make(map[string]interface{})
