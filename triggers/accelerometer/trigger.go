@@ -282,8 +282,6 @@ func (t *MyTrigger) readData() {
 					req := t.constructStartRequest(accelData)
 					startAttrs, _ := t.metadata.OutputsToAttrs(req.Data, false)
 
-					log.Info(req.Data)
-
 					context := trigger.NewContext(context.Background(), startAttrs)
 					_, respData, err := t.runner.Run(context, act, handler.ActionId, nil)
 					if err != nil {
