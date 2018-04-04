@@ -236,10 +236,19 @@ func (t *MyTrigger) readData() {
 	URL := "ws://192.168.1.6:8099/"
 
 	var dialer *websocket.Dialer
-	conn, _, err := dialer.Dial(URL, nil)
-	if err != nil {
-		fmt.Println(err)
-		return
+	var conn *websocket.Conn
+
+	for {
+		var err error
+		conn, _, err = dialer.Dial(URL, nil)
+		if err != nil {
+			fmt.Println(err)
+			//return
+		} else {
+			break
+		}
+
+		time.Sleep(1 * time.Second)
 	}
 
 	for {

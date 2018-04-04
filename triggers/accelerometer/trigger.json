@@ -5,7 +5,12 @@
   "description": "trigger description",
   "author": "Your Name <you.name@example.org>",
   "ref": "github.com/mellistibco/flogo-activities/triggers/accelerometer",
-  "settings":[],
+  "settings":[
+    {
+      "name": "mqttServer",
+      "type": "string"
+    }
+  ],
   "outputs": [
     {
       "name": "accelerometer",

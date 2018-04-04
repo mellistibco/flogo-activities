@@ -1,0 +1,26 @@
+{
+  "name": "parsecsv",
+  "version": "0.0.1",
+  "ref": "github.com/mellistibco/flogo-activities/activities/parsecsv",
+  "type": "flogo:activity",
+  "description": "Parse CSV into a Flogo Object",
+  "author": "Your Name <you.name@example.org>",
+  "inputs":[
+    {
+      "name": "fieldNames",
+      "type": "array",
+      "required": true
+    },
+    {
+      "name": "csv",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "type": "array"
+    }
+  ]
+}
