@@ -69,11 +69,7 @@ func (a *ParseCSVActivity) Eval(ctx activity.Context) (done bool, err error) {
 
 		obj = append(obj, field)
 	}
-	/*
-		out := map[string]interface{}{
-			"result": obj,
-		}
-	*/
+
 	ctx.SetOutput(ovOutput, obj)
 
 	return true, nil
