@@ -1,5 +1,5 @@
 {
-  "name": "parsecsv",
+  "name": "Parse CSV",
   "version": "0.0.1",
   "ref": "github.com/mellistibco/flogo-activities/activities/parsecsv",
   "type": "flogo:activity",
