@@ -41,7 +41,7 @@ func (a *ParseCSVActivity) Metadata() *activity.Metadata {
 
 // Eval implements activity.Activity.Eval
 func (a *ParseCSVActivity) Eval(ctx activity.Context) (done bool, err error) {
-	fieldNames := ctx.GetInput(ivFieldNames).([]string)
+	fieldNames := ctx.GetInput(ivFieldNames).([]interface{})
 	txt := ctx.GetInput(ivCSV).(string)
 
 	r := csv.NewReader(strings.NewReader(txt))
@@ -65,12 +65,13 @@ func (a *ParseCSVActivity) Eval(ctx activity.Context) (done bool, err error) {
 		field := make(map[string]string)
 
 		for i := 0; i < len(record); i++ {
-			field[fieldNames[i]] = record[i]
+			field[fieldNames[i].(string)] = record[i]
 		}
 
 		obj = append(obj, field)
 	}
 
+	activityLog.Debugf("Parsed Object from CSV: %s", obj)
 	ctx.SetOutput(ovOutput, obj)
 
 	return true, nil
