@@ -20,10 +20,6 @@ const (
 	ovOutput = "output"
 )
 
-func init() {
-	activityLog.SetLogLevel(logger.InfoLevel)
-}
-
 // MyActivity is a stub for your Activity implementation
 type ParseCSVActivity struct {
 	metadata *activity.Metadata
