@@ -12,25 +12,25 @@ Inputs and Outputs:
 
 ```json
 {
-    "inputs":[
+  "inputs": [
     {
-        "name": "fieldNames",
-        "type": "array",
-        "required": true
+      "name": "fieldNames",
+      "type": "array",
+      "required": true
     },
     {
-        "name": "csv",
-        "type": "string",
-        "required": true
+      "name": "csv",
+      "type": "string",
+      "required": true
     }
-],
-    "output": [
+  ],
+  "output": [
     {
-        "name": "output",
-        "type": "array"
+      "name": "output",
+      "type": "array"
     }
   ]
- }
+}
 ```
 ## Settings
 | Setting        | Required | Description |
