@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "ref": "github.com/mellistibco/flogo-activities/activities/parsecsv",
   "type": "flogo:activity",
-  "description": "Parse CSV into a Flogo Object",
-  "author": "Your Name <you.name@example.org>",
+  "description": "Parse CSV into a Flogo Array",
+  "author": "Matt Ellis <mellis@tibco.com>",
   "inputs":[
     {
       "name": "fieldNames",

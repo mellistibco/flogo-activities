@@ -2,6 +2,7 @@ package parsecsv
 
 import (
 	"encoding/csv"
+	"fmt"
 	"io"
 	"strings"
 
@@ -58,7 +59,7 @@ func (a *ParseCSVActivity) Eval(ctx activity.Context) (done bool, err error) {
 
 		if len(record) != len(fieldNames) {
 			activityLog.Error("Mismatch between number of fields and field names specified")
-			return false, nil
+			return false, fmt.Errorf("Fields supplied do not match total fields in csv. Expected %d but got %d", len(fieldNames), len(record))
 		}
 
 		field := make(map[string]string)

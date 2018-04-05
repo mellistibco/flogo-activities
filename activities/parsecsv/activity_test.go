@@ -66,3 +66,32 @@ func TestEval(t *testing.T) {
 	b, _ := json.Marshal(tc.GetOutput("output"))
 	fmt.Println(string(b))
 }
+
+func TestWithMissmatchFields(t *testing.T) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Failed()
+			t.Errorf("panic during execution: %v", r)
+		}
+	}()
+
+	act := NewActivity(getActivityMetadata())
+	tc := test.NewTestActivityContext(getActivityMetadata())
+
+	//setup attrs
+	fields := make([]string, 2)
+	fields[0] = "test"
+	fields[1] = "test2"
+	tc.SetInput("fieldNames", fields)
+	tc.SetInput("csv", "hello,my,name\ntest,test,test")
+
+	done, err := act.Eval(tc)
+	if !done {
+		fmt.Println(err)
+	}
+
+	//check result attr
+	b, _ := json.Marshal(tc.GetOutput("output"))
+	fmt.Println(string(b))
+}
