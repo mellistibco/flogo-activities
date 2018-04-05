@@ -49,7 +49,7 @@ The below example will parse the supplied text.
   "activity": {
     "ref": "github.com/mellistibco/flogo-activities/activities/parsecsv",
     "input": {
-      "fieldNames": "field1,field2,field3",
+      "fieldNames": ["field1","field2","field3"],
       "csv": "data1,data2,data3\ndata11,data22,data33"
     }
   }
