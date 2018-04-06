@@ -97,4 +97,4 @@ The below example will parse the supplied text.
 }
 ```
 
-The above sample will return a start date of now-5 and an end date of '04052018215500'
+The above sample will return a start date of 04042018215500-5 minutes and an end date of now.
