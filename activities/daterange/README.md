@@ -63,20 +63,35 @@ The below example will parse the supplied text.
 
 ```json
 {
-  "id": "daterange_1",
+  "id": "daterange_2",
   "name": "Date Range",
   "description": "Calculate date range given a start date with an offset and an end date with an offset.",
   "activity": {
     "ref": "github.com/mellistibco/flogo-activities/activities/daterange",
     "input": {
-      "startDate":   {
-        "Date":   "",
-        "Offset": -5,
-        "Units": "minutes"
-      },
-      "endDate":   {
-        "Date":   "04052018215500"
-      },
+      "startDate": null,
+      "endDate": null
+    },
+    "mappings": {
+      "input": [
+        {
+          "type": "object",
+          "value": {
+            "Date": "04042018215500",
+            "Offset": -5,
+            "Units": "minutes"
+          },
+          "mapTo": "startDate"
+        },
+        {
+          "type": "object",
+          "value": {
+            "Date": "",
+            "Offset": 0
+          },
+          "mapTo": "endDate"
+        }
+      ]
     }
   }
 }

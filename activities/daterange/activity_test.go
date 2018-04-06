@@ -50,7 +50,7 @@ func TestEval(t *testing.T) {
 
 	//setup attrs
 	startDate := map[string]interface{}{
-		"Date":   "",
+		"Date":   "04042018215500",
 		"Offset": -5,
 		"Units":  "minutes",
 	}

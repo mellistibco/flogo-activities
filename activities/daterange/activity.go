@@ -64,11 +64,11 @@ func (a *DateRangeActivity) Eval(ctx activity.Context) (done bool, err error) {
 	start := time.Now()
 	end := time.Now()
 
-	if str, ok := inputStart["Date"].(string); ok && str != "" {
-		start, _ = time.Parse("01022006150405", inputStart["Date"].(string))
+	if date, ok := inputStart["Date"].(string); ok && date != "" {
+		start, _ = time.Parse("01022006150405", date)
 	}
-	if str, ok := inputEnd["Date"].(string); ok && str != "" {
-		end, _ = time.Parse("01022006150405", inputEnd["Date"].(string))
+	if date, ok := inputEnd["Date"].(string); ok && date != "" {
+		end, _ = time.Parse("01022006150405", date)
 	}
 
 	if offset, ok := inputStart["Offset"].(int); ok {
