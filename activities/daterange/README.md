@@ -46,11 +46,11 @@ Inputs and Outputs:
 The input object should be structured as follows:
 
 ```json
-  {
-		"Date":   "04052018205400",
-		"Offset": -5,
-		"Units":  "minutes",
-	}
+{
+  "Date":   "04052018205400",
+  "Offset": -5,
+  "Units":  "minutes"
+}
 ```
 
 * To indicate that the date should be NOW, leave as an empty string or remove the `Date` field from the object.
