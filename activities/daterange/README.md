@@ -14,6 +14,12 @@ Inputs and Outputs:
 {
   "inputs": [
     {
+      "name": "format",
+      "type": "string",
+      "required": "false",
+      "value": "01022006150405"
+    },
+    {
       "name": "startDate",
       "type": "object",
       "required": true
@@ -40,7 +46,8 @@ Inputs and Outputs:
 ## Settings
 | Setting        | Required | Description |
 |:---------------|:---------|:------------|
-| startDate      | True     | An object representing the start date in the format of MMDDYYYYHHMMSS, an offset and units |         
+| format         | False     | The date format. The default value is `01022006150405` |
+| startDate      | True      | An object representing the start date in the format of MMDDYYYYHHMMSS, an offset and units         
 | endDate        | False     | An object representing the end date in the format of MMDDYYYYHHMMSS, an offset and units. If not supplied, the end date is assumed to be NOW with no offset
 
 The input object should be structured as follows:
@@ -69,8 +76,6 @@ The below example will parse the supplied text.
   "activity": {
     "ref": "github.com/mellistibco/flogo-activities/activities/daterange",
     "input": {
-      "startDate": null,
-      "endDate": null
     },
     "mappings": {
       "input": [

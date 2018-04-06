@@ -59,6 +59,7 @@ func TestEval(t *testing.T) {
 		"Offset": 0,
 		"Units":  "",
 	}
+	tc.SetInput("format", "01022006150405")
 	tc.SetInput("startDate", startDate)
 	tc.SetInput("endDate", endDate)
 
@@ -97,6 +98,7 @@ func TestMissingFields(t *testing.T) {
 		"Offset": 0,
 		"Units":  "",
 	}
+	tc.SetInput("format", "01022006150405")
 	tc.SetInput("startDate", startDate)
 	tc.SetInput("endDate", endDate)
 
@@ -130,6 +132,7 @@ func TestNoEndDate(t *testing.T) {
 		"Offset": -5,
 		"Units":  "minutes",
 	}
+	tc.SetInput("format", "01022006150405")
 	tc.SetInput("startDate", startDate)
 
 	done, err := act.Eval(tc)

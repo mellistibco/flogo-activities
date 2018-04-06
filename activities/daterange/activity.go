@@ -11,6 +11,7 @@ import (
 var activityLog = logger.GetLogger("activity-flogo-parsecsv")
 
 const (
+	ivFormat    = "format"
 	ivStartDate = "startDate"
 	ivEndDate   = "endDate"
 
@@ -55,6 +56,7 @@ func calcOffset(date *time.Time, offset int, units string) {
 
 // Eval implements activity.Activity.Eval
 func (a *DateRangeActivity) Eval(ctx activity.Context) (done bool, err error) {
+	format := ctx.GetInput(ivFormat).(string)
 	inputStart := ctx.GetInput(ivStartDate).(map[string]interface{})
 	inputEnd, ok := ctx.GetInput(ivEndDate).(map[string]interface{})
 	if !ok {
@@ -65,10 +67,10 @@ func (a *DateRangeActivity) Eval(ctx activity.Context) (done bool, err error) {
 	end := time.Now()
 
 	if date, ok := inputStart["Date"].(string); ok && date != "" {
-		start, _ = time.Parse("01022006150405", date)
+		start, _ = time.Parse(format, date)
 	}
 	if date, ok := inputEnd["Date"].(string); ok && date != "" {
-		end, _ = time.Parse("01022006150405", date)
+		end, _ = time.Parse(format, date)
 	}
 
 	if offset, ok := inputStart["Offset"].(int); ok {
@@ -86,8 +88,8 @@ func (a *DateRangeActivity) Eval(ctx activity.Context) (done bool, err error) {
 		}
 	}
 
-	ctx.SetOutput(ovStartDate, start.Format("01022006150405"))
-	ctx.SetOutput(ovEndDate, end.Format("01022006150405"))
+	ctx.SetOutput(ovStartDate, start.Format(format))
+	ctx.SetOutput(ovEndDate, end.Format(format))
 
 	return true, nil
 }

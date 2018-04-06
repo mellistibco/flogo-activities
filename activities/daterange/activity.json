@@ -7,6 +7,12 @@
   "author": "Matt Ellis <mellis@tibco.com>",
   "inputs":[
     {
+      "name": "format",
+      "type": "string",
+      "required": "false",
+      "value": "01022006150405"
+    },
+    {
       "name": "startDate",
       "type": "object",
       "required": true
