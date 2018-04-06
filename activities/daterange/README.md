@@ -27,7 +27,7 @@ Inputs and Outputs:
     {
       "name": "endDate",
       "type": "object",
-      "required": true
+      "required": false
     }
   ],
   "output": [
