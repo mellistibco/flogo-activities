@@ -1,4 +1,4 @@
-# Parse CSV
+# Date Range
 This activity accepts a start date & end date. You can specify a unit offset for either date to calculate a start/end date range.
 
 ## Installation

@@ -56,7 +56,10 @@ func calcOffset(date *time.Time, offset int, units string) {
 // Eval implements activity.Activity.Eval
 func (a *DateRangeActivity) Eval(ctx activity.Context) (done bool, err error) {
 	inputStart := ctx.GetInput(ivStartDate).(map[string]interface{})
-	inputEnd := ctx.GetInput(ivEndDate).(map[string]interface{})
+	inputEnd, ok := ctx.GetInput(ivEndDate).(map[string]interface{})
+	if !ok {
+		inputEnd = make(map[string]interface{})
+	}
 
 	start := time.Now()
 	end := time.Now()
