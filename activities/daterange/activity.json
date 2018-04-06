@@ -1,0 +1,30 @@
+{
+  "name": "Date Range",
+  "version": "0.0.1",
+  "ref": "github.com/mellistibco/flogo-activities/activities/daterange",
+  "type": "flogo:activity",
+  "description": "Calculate date range given a start date with an offset and an end date with an offset.",
+  "author": "Matt Ellis <mellis@tibco.com>",
+  "inputs":[
+    {
+      "name": "startDate",
+      "type": "object",
+      "required": true
+    },
+    {
+      "name": "endDate",
+      "type": "object",
+      "required": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "newStartDate",
+      "type": "string"
+    },
+    {
+      "name": "newEndDate",
+      "type": "string"
+    }
+  ]
+}
