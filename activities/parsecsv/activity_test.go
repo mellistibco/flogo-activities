@@ -50,7 +50,7 @@ func TestEval(t *testing.T) {
 	tc := test.NewTestActivityContext(getActivityMetadata())
 
 	//setup attrs
-	fields := make([]string, 3)
+	fields := make([]interface{}, 3)
 	fields[0] = "test"
 	fields[1] = "test2"
 	fields[2] = "test3"
@@ -80,7 +80,7 @@ func TestWithMissmatchFields(t *testing.T) {
 	tc := test.NewTestActivityContext(getActivityMetadata())
 
 	//setup attrs
-	fields := make([]string, 2)
+	fields := make([]interface{}, 2)
 	fields[0] = "test"
 	fields[1] = "test2"
 	tc.SetInput("fieldNames", fields)

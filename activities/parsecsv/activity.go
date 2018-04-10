@@ -58,7 +58,7 @@ func (a *ParseCSVActivity) Eval(ctx activity.Context) (done bool, err error) {
 			return false, fmt.Errorf("Fields supplied do not match total fields in csv. Expected %d but got %d", len(fieldNames), len(record))
 		}
 
-		field := make(map[string]string)
+		field := make(map[string]interface{})
 
 		for i := 0; i < len(record); i++ {
 			field[fieldNames[i].(string)] = record[i]
