@@ -226,25 +226,28 @@ func (t *MyTrigger) readData() {
 	adxl, _ := NewAdxl345(0x53, 1)
 	adxl.Init()
 
-	data := adxl.Read()
+	for {
+		data := adxl.Read()
 
-	// Pass the data to the flow
-	handlers := t.config.Handlers
+		// Pass the data to the flow
+		handlers := t.config.Handlers
 
-	log.Debug("Processing handlers")
-	for _, handler := range handlers {
-		act := action.Get(handler.ActionId)
+		log.Debug("Processing handlers")
+		for _, handler := range handlers {
+			act := action.Get(handler.ActionId)
 
-		log.Debugf("Found action: '%+x'", act)
-		log.Debugf("ActionID: '%s'", handler.ActionId)
+			log.Debugf("Found action: '%+x'", act)
+			log.Debugf("ActionID: '%s'", handler.ActionId)
 
-		req := t.constructStartRequest(data.data)
-		startAttrs, _ := t.metadata.OutputsToAttrs(req.Data, false)
-
-		context := trigger.NewContext(context.Background(), startAttrs)
-		_, _, err := t.runner.Run(context, act, handler.ActionId, nil)
-		if err != nil {
-			log.Critical(err.Error())
+			req := t.constructStartRequest(data.data)
+			log.Debugf("+v", req)
+			startAttrs, _ := t.metadata.OutputsToAttrs(req.Data, false)
+			fmt.Println(startAttrs)
+			context := trigger.NewContext(context.Background(), startAttrs)
+			_, _, err := t.runner.Run(context, act, handler.ActionId, nil)
+			if err != nil {
+				log.Critical(err.Error())
+			}
 		}
 	}
 }
