@@ -241,7 +241,7 @@ func (t *MyTrigger) readData() {
 			log.Debugf("Found action: '%+x'", act)
 			log.Debugf("ActionID: '%s'", handler.ActionId)
 
-			req := t.constructStartRequest(data.data)
+			req := t.constructStartRequest(data.data, 100)
 			log.Debugf("+v", req)
 			startAttrs, _ := t.metadata.OutputsToAttrs(req.Data, false)
 			fmt.Println(startAttrs)
@@ -254,10 +254,13 @@ func (t *MyTrigger) readData() {
 	}
 }
 
-func (t *MyTrigger) constructStartRequest(message []float64) *StartRequest {
+func (t *MyTrigger) constructStartRequest(message []float64, norm int) *StartRequest {
 	//TODO how to handle reply to, reply feature
 	req := &StartRequest{}
 	data := make(map[string]interface{})
+	for i := range message {
+		message[i] = message[i] / float64(norm)
+	}
 	data["accelerometer"] = message
 	req.Data = data
 	return req
