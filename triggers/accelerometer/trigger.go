@@ -233,18 +233,13 @@ func (t *MyTrigger) readData() {
 
 		// Pass the data to the flow
 		handlers := t.config.Handlers
-
-		log.Debug("Processing handlers")
 		for _, handler := range handlers {
 			act := action.Get(handler.ActionId)
 
-			log.Debugf("Found action: '%+x'", act)
-			log.Debugf("ActionID: '%s'", handler.ActionId)
-
 			req := t.constructStartRequest(data.data, 100)
-			log.Debugf("+v", req)
+
 			startAttrs, _ := t.metadata.OutputsToAttrs(req.Data, false)
-			fmt.Println(startAttrs)
+
 			context := trigger.NewContext(context.Background(), startAttrs)
 			_, _, err := t.runner.Run(context, act, handler.ActionId, nil)
 			if err != nil {
