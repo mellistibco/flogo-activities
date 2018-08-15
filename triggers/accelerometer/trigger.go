@@ -97,7 +97,7 @@ type Adxl345 struct {
 }
 
 type Acceleration struct {
-	data [3]float64 /* mg */
+	data []float64 /* mg */
 }
 
 type Message struct {
@@ -148,7 +148,9 @@ func (adxl *Adxl345) Read() *Acceleration {
 	binary.Read(buf, binary.LittleEndian, &yReg)
 	binary.Read(buf, binary.LittleEndian, &zReg)
 
-	ret := &Acceleration{}
+	ret := &Acceleration{
+		data: make([]float64, 3),
+	}
 	ret.data[0] = float64(xReg) * fullResolutionScaleFactor
 	ret.data[1] = float64(yReg) * fullResolutionScaleFactor
 	ret.data[2] = float64(zReg) * fullResolutionScaleFactor
@@ -252,7 +254,7 @@ func (t *MyTrigger) readData() {
 	}
 }
 
-func (t *MyTrigger) constructStartRequest(message [3]float64) *StartRequest {
+func (t *MyTrigger) constructStartRequest(message []float64) *StartRequest {
 	//TODO how to handle reply to, reply feature
 	req := &StartRequest{}
 	data := make(map[string]interface{})
