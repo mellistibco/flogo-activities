@@ -228,110 +228,27 @@ func (t *MyTrigger) Stop() error {
 func (t *MyTrigger) readData() {
 	adxl, _ := NewAdxl345(0x53, 1)
 	adxl.Init()
-	var tmpResults [][3]float32
-	var accelData [][]float64
 
-	ticker := time.NewTicker(time.Millisecond * 50).C
+	data := adxl.Read()
 
-	URL := "ws://192.168.1.6:8099/"
+	// Pass the data to the flow
+	handlers := t.config.Handlers
 
-	var dialer *websocket.Dialer
-	var conn *websocket.Conn
+	log.Debug("Processing handlers")
+	for _, handler := range handlers {
+		act := action.Get(handler.ActionId)
 
-	for {
-		var err error
-		conn, _, err = dialer.Dial(URL, nil)
+		log.Debugf("Found action: '%+x'", act)
+		log.Debugf("ActionID: '%s'", handler.ActionId)
+
+		req := t.constructStartRequest(data.data)
+		startAttrs, _ := t.metadata.OutputsToAttrs(req.Data, false)
+
+		context := trigger.NewContext(context.Background(), startAttrs)
+		_, respData, err := t.runner.Run(context, act, handler.ActionId, nil)
 		if err != nil {
-			fmt.Println(err)
-			//return
-		} else {
-			break
+			log.Critical(err.Error)
 		}
-
-		time.Sleep(1 * time.Second)
-	}
-
-	for {
-		select {
-		case <-ticker:
-			timeMutex.Lock()
-
-			if len(tmpResults) > 0 {
-
-				var totalX float64
-				var totalY float64
-				var totalZ float64
-				for _, value := range tmpResults {
-					totalX += float64(value[0]) / 100
-					totalY += float64(value[1]) / 100
-					totalZ += float64(value[2]) / 100
-				}
-
-				accelData = append(accelData, []float64{totalX / float64(len(tmpResults)), totalY / float64(len(tmpResults)), totalZ / float64(len(tmpResults))})
-
-				// Clear slice
-				tmpResults = tmpResults[:0]
-			}
-
-			timeMutex.Unlock()
-		default:
-			timeMutex.Lock()
-
-			if len(accelData) == 11 {
-				// Pass the data to the flow
-				handlers := t.config.Handlers
-
-				log.Debug("Processing handlers")
-				for _, handler := range handlers {
-					act := action.Get(handler.ActionId)
-
-					log.Debugf("Found action: '%+x'", act)
-					log.Debugf("ActionID: '%s'", handler.ActionId)
-
-					req := t.constructStartRequest(accelData)
-					startAttrs, _ := t.metadata.OutputsToAttrs(req.Data, false)
-
-					context := trigger.NewContext(context.Background(), startAttrs)
-					_, respData, err := t.runner.Run(context, act, handler.ActionId, nil)
-					if err != nil {
-						log.Critical(err.Error)
-					}
-
-					finalData := respData.(map[string]interface{})
-					var walking, standing, jogging float64
-
-					for i := 0; i < len(finalData["classes"].([][]string)[0]); i++ {
-
-						if finalData["classes"].([][]string)[0][i] == "Walking" {
-							walking = float64(finalData["scores"].([][]float32)[0][i])
-						}
-						if finalData["classes"].([][]string)[0][i] == "Standing" {
-							standing = float64(finalData["scores"].([][]float32)[0][i])
-						}
-						if finalData["classes"].([][]string)[0][i] == "Jogging" {
-							jogging = float64(finalData["scores"].([][]float32)[0][i])
-						}
-					}
-
-					// Publish response from flow
-					msg := Message{
-						Walking:  walking,
-						Standing: standing,
-						Jogging:  jogging,
-					}
-					b, _ := json.Marshal(msg)
-					conn.WriteMessage(websocket.TextMessage, b)
-				}
-
-				// Clear the slice
-				accelData = accelData[:0]
-			}
-
-			data := adxl.Read()
-			tmpResults = append(tmpResults, data.data)
-			timeMutex.Unlock()
-		}
-	}
 }
 
 func (t *MyTrigger) constructStartRequest(message [][]float64) *StartRequest {
