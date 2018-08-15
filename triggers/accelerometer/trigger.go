@@ -244,7 +244,7 @@ func (t *MyTrigger) readData() {
 		context := trigger.NewContext(context.Background(), startAttrs)
 		_, _, err := t.runner.Run(context, act, handler.ActionId, nil)
 		if err != nil {
-			log.Critical(err.Error)
+			log.Critical(err.Error())
 		}
 	}
 }
