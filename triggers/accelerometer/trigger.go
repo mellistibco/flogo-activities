@@ -4,17 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/binary"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"sync"
-	"time"
 
+	"github.com/TIBCOSoftware/flogo-contrib/action/flow/support"
 	"github.com/TIBCOSoftware/flogo-lib/core/action"
 	"github.com/TIBCOSoftware/flogo-lib/core/trigger"
 	i2c "github.com/davecheney/i2c"
-	"github.com/gorilla/websocket"
-	"github.com/mellistibco/flogo-contrib/action/flow/support"
 	logging "github.com/op/go-logging"
 )
 
@@ -91,7 +88,7 @@ const (
 )
 
 const deviceID byte = 0xE5
-const fullResolutionScaleFactor float32 = 3.9
+const fullResolutionScaleFactor float64 = 3.9
 
 type Adxl345 struct {
 	bus     *i2c.I2C
@@ -100,7 +97,7 @@ type Adxl345 struct {
 }
 
 type Acceleration struct {
-	data [3]float32 /* mg */
+	data [3]float64 /* mg */
 }
 
 type Message struct {
@@ -152,9 +149,9 @@ func (adxl *Adxl345) Read() *Acceleration {
 	binary.Read(buf, binary.LittleEndian, &zReg)
 
 	ret := &Acceleration{}
-	ret.data[0] = float32(xReg) * fullResolutionScaleFactor
-	ret.data[1] = float32(yReg) * fullResolutionScaleFactor
-	ret.data[2] = float32(zReg) * fullResolutionScaleFactor
+	ret.data[0] = float64(xReg) * fullResolutionScaleFactor
+	ret.data[1] = float64(yReg) * fullResolutionScaleFactor
+	ret.data[2] = float64(zReg) * fullResolutionScaleFactor
 
 	return ret
 }
@@ -245,13 +242,14 @@ func (t *MyTrigger) readData() {
 		startAttrs, _ := t.metadata.OutputsToAttrs(req.Data, false)
 
 		context := trigger.NewContext(context.Background(), startAttrs)
-		_, respData, err := t.runner.Run(context, act, handler.ActionId, nil)
+		_, _, err := t.runner.Run(context, act, handler.ActionId, nil)
 		if err != nil {
 			log.Critical(err.Error)
 		}
+	}
 }
 
-func (t *MyTrigger) constructStartRequest(message [][]float64) *StartRequest {
+func (t *MyTrigger) constructStartRequest(message [3]float64) *StartRequest {
 	//TODO how to handle reply to, reply feature
 	req := &StartRequest{}
 	data := make(map[string]interface{})
