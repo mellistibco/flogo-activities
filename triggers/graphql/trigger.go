@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/TIBCOSoftware/flogo-contrib/trigger/rest/cors"
-	"github.com/TIBCOSoftware/flogo-lib/core/data"
 	"github.com/TIBCOSoftware/flogo-lib/core/trigger"
 	"github.com/TIBCOSoftware/flogo-lib/logger"
 	"github.com/graphql-go/graphql"
@@ -74,7 +73,7 @@ func (t *GraphQLTrigger) Initialize(ctx trigger.InitContext) error {
 
 	// Build the GraphQL Object Types & Schemas
 	t.buildGraphQLObjects()
-	t.buildGraphQLSchema(ctx.GetHandlers())
+	graphQlSchema = t.buildGraphQLSchema(ctx.GetHandlers())
 
 	// Init handlers
 	for _, handler := range ctx.GetHandlers() {
@@ -104,13 +103,14 @@ func (t *GraphQLTrigger) Initialize(ctx trigger.InitContext) error {
 }
 
 func (t *GraphQLTrigger) buildGraphQLObjects() {
-	gqlTypes := t.config.Settings["types"].([]map[string]interface{})
+	gqlTypes := t.config.Settings["types"].([]interface{})
 
 	// Create type objects
 	gqlObjects = make(map[string]*graphql.Object)
 
 	// Get the graphql types
 	for _, typ := range gqlTypes {
+		typ := typ.(map[string]interface{})
 		name := typ["Name"].(string)
 		fields := make(graphql.Fields)
 
@@ -208,12 +208,12 @@ func fieldResolver(handler *trigger.Handler) graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (interface{}, error) {
 
 		triggerData := map[string]interface{}{
-			"resolveParams": p,
+			"resolveParams": p.Args,
 		}
 
 		results, err := handler.Handle(context.Background(), triggerData)
 
-		return results, err
+		return results["data"].Value(), err
 	}
 
 }
@@ -303,43 +303,20 @@ func newActionHandler(rt *GraphQLTrigger, handler *trigger.Handler) httprouter.H
 			RequestString: queryParams["query"],
 		})
 
-		var replyData interface{}
-		var replyCode int
-
-		resp := result.Data.(map[string]interface{})
-		if len(resp) != 0 {
-			dataAttr, ok := resp["data"]
-			if ok {
-				replyData = dataAttr
-			}
-			codeAttr, ok := resp["code"]
-			if ok {
-				replyCode, _ = data.CoerceToInteger(codeAttr)
-			}
-		}
-
 		if len(result.Errors) > 0 {
 			log.Debugf("REST Trigger Error: %s", result.Errors)
 			http.Error(w, result.Errors[0].Error(), http.StatusBadRequest)
 			return
 		}
 
-		if replyData != nil {
+		if result.Data != nil {
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			if replyCode == 0 {
-				replyCode = 200
-			}
-			w.WriteHeader(replyCode)
-			if err := json.NewEncoder(w).Encode(replyData); err != nil {
+			w.WriteHeader(http.StatusOK)
+
+			if err := json.NewEncoder(w).Encode(result.Data); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
 				log.Error(err)
 			}
-			return
-		}
-
-		if replyCode > 0 {
-			w.WriteHeader(replyCode)
-		} else {
-			w.WriteHeader(http.StatusOK)
 		}
 	}
 }
