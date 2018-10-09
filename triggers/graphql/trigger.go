@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	REST_CORS_PREFIX = "REST_TRIGGER"
+	REST_CORS_PREFIX = "GRAPHQL_TRIGGER"
 )
 
 // log is the default package logger
@@ -141,7 +141,7 @@ func (t *GraphQLTrigger) buildGraphQLSchema(handlers []*trigger.Handler) *graphq
 
 						argTyp := v.(map[string]interface{})
 						args[k] = &graphql.ArgumentConfig{
-							Type: coerceType(argTyp["type"].(string)), // get typ from v.(string)
+							Type: coerceType(argTyp["type"].(string)),
 						}
 					}
 
@@ -149,7 +149,7 @@ func (t *GraphQLTrigger) buildGraphQLSchema(handlers []*trigger.Handler) *graphq
 						if strings.EqualFold(handler.GetStringSetting("resolverFor"), k) {
 							// Build the queryField
 							queryFields[k] = &graphql.Field{
-								Type:    gqlObjects[k], // need to fix this so its case insensitive
+								Type:    gqlObjects[k],
 								Args:    args,
 								Resolve: fieldResolver(handler),
 							}
@@ -291,6 +291,12 @@ func coerceType(typ string) *graphql.Scalar {
 	switch typ {
 	case "graphql.String":
 		return graphql.String
+	case "graphql.Float":
+		return graphql.Float
+	case "graphql.Int":
+		return graphql.Int
+	case "graphql.Boolean":
+		return graphql.Boolean
 	}
 
 	return nil
