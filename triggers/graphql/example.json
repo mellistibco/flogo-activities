@@ -92,7 +92,6 @@
             }
           },
           "settings": {
-            "method": "GET",
             "type": "user"
           }
         },
@@ -120,7 +119,6 @@
             }
           },
           "settings": {
-            "method": "GET",
             "type": "address"
           }
         }
