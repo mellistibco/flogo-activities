@@ -50,7 +50,7 @@
     "handler": {
       "settings": [
         {
-          "name": "type",
+          "name": "resolverFor",
           "type": "string",
           "required" : true
         }

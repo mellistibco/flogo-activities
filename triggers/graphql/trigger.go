@@ -88,15 +88,16 @@ func (t *GraphQLTrigger) buildGraphQLObjects() {
 
 	// Get the graphql types
 	for _, typ := range gqlTypes {
-		typ := typ.(map[string]interface{})
-		name := typ["Name"].(string)
+		lTyp := lower(typ)
+		typ := lTyp.(map[string]interface{})
+		name := typ["name"].(string)
 		fields := make(graphql.Fields)
 
-		for k, f := range typ["Fields"].(map[string]interface{}) {
+		for k, f := range typ["fields"].(map[string]interface{}) {
 			fTyp := f.(map[string]interface{})
 
 			fields[k] = &graphql.Field{
-				Type: coerceType(fTyp["Type"].(string)),
+				Type: coerceType(fTyp["type"].(string)),
 			}
 		}
 
@@ -112,6 +113,7 @@ func (t *GraphQLTrigger) buildGraphQLObjects() {
 
 func (t *GraphQLTrigger) buildGraphQLSchema(handlers []*trigger.Handler) *graphql.Schema {
 	fSchema := t.config.Settings["schema"].(map[string]interface{})
+	fSchema = lower(fSchema).(map[string]interface{})
 
 	// Build the graphql schema
 	var schema graphql.Schema
@@ -123,7 +125,7 @@ func (t *GraphQLTrigger) buildGraphQLSchema(handlers []*trigger.Handler) *graphq
 		queryFields := make(graphql.Fields)
 
 		// Get the object name
-		for k, v := range fSchema["Query"].(map[string]interface{}) {
+		for k, v := range fSchema["query"].(map[string]interface{}) {
 			if strings.EqualFold(k, "name") {
 				objName = v.(string)
 			} else if strings.EqualFold(k, "fields") {
@@ -135,16 +137,16 @@ func (t *GraphQLTrigger) buildGraphQLSchema(handlers []*trigger.Handler) *graphq
 					argObj := v.(map[string]interface{})
 					args := make(graphql.FieldConfigArgument)
 
-					for k, v := range argObj["Args"].(map[string]interface{}) {
+					for k, v := range argObj["args"].(map[string]interface{}) {
 
 						argTyp := v.(map[string]interface{})
 						args[k] = &graphql.ArgumentConfig{
-							Type: coerceType(argTyp["Type"].(string)), // get typ from v.(string)
+							Type: coerceType(argTyp["type"].(string)), // get typ from v.(string)
 						}
 					}
 
 					for _, handler := range handlers {
-						if strings.EqualFold(handler.GetStringSetting("type"), k) {
+						if strings.EqualFold(handler.GetStringSetting("resolverFor"), k) {
 							// Build the queryField
 							queryFields[k] = &graphql.Field{
 								Type:    gqlObjects[k], // need to fix this so its case insensitive
@@ -294,11 +296,20 @@ func coerceType(typ string) *graphql.Scalar {
 	return nil
 }
 
-func stringInList(str string, list []string) bool {
-	for _, value := range list {
-		if value == str {
-			return true
+func lower(f interface{}) interface{} {
+	switch f := f.(type) {
+	case []interface{}:
+		for i := range f {
+			f[i] = lower(f[i])
 		}
+		return f
+	case map[string]interface{}:
+		lf := make(map[string]interface{}, len(f))
+		for k, v := range f {
+			lf[strings.ToLower(k)] = lower(v)
+		}
+		return lf
+	default:
+		return f
 	}
-	return false
 }
