@@ -1,12 +1,10 @@
 package graphql
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/url"
 	"strings"
 
 	"github.com/TIBCOSoftware/flogo-contrib/trigger/rest/cors"
@@ -25,7 +23,7 @@ const (
 // log is the default package logger
 var log = logger.GetLogger("trigger-flogo-graphql")
 
-var validMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
+var validMethods = []string{"GET", "POST"}
 var gqlObjects map[string]*graphql.Object
 var graphQlSchema *graphql.Schema
 
@@ -208,11 +206,10 @@ func fieldResolver(handler *trigger.Handler) graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (interface{}, error) {
 
 		triggerData := map[string]interface{}{
-			"resolveParams": p.Args,
+			"args": p.Args,
 		}
 
 		results, err := handler.Handle(context.Background(), triggerData)
-
 		return results["data"].Value(), err
 	}
 
@@ -236,11 +233,6 @@ func newActionHandler(rt *GraphQLTrigger, handler *trigger.Handler) httprouter.H
 		c := cors.New(REST_CORS_PREFIX, log)
 		c.WriteCorsActualRequestHeaders(w)
 
-		pathParams := make(map[string]string)
-		for _, param := range ps {
-			pathParams[param.Key] = param.Value
-		}
-
 		queryValues := r.URL.Query()
 		queryParams := make(map[string]string, len(queryValues))
 		header := make(map[string]string, len(r.Header))
@@ -253,35 +245,19 @@ func newActionHandler(rt *GraphQLTrigger, handler *trigger.Handler) httprouter.H
 			queryParams[key] = strings.Join(value, ",")
 		}
 
-		triggerData := map[string]interface{}{
-			"params":      pathParams,
-			"pathParams":  pathParams,
-			"queryParams": queryParams,
-			"header":      header,
-		}
+		var query string
 
-		// Check the HTTP Header Content-Type
-		contentType := r.Header.Get("Content-Type")
-		switch contentType {
-		case "application/x-www-form-urlencoded":
-			buf := new(bytes.Buffer)
-			buf.ReadFrom(r.Body)
-			s := buf.String()
-			m, err := url.ParseQuery(s)
-			content := make(map[string]interface{}, 0)
-			if err != nil {
-				log.Errorf("Error while parsing query string: %s", err.Error())
+		httpVerb := strings.ToUpper(handler.GetStringSetting("method"))
+		if val, ok := queryParams["query"]; ok && strings.EqualFold(httpVerb, "GET") {
+			query = val
+		} else if strings.EqualFold(httpVerb, "POST") {
+			// Check the HTTP Header Content-Type
+			contentType := r.Header.Get("Content-Type")
+			if !strings.EqualFold(contentType, "application/json") {
+				err := fmt.Errorf("%v", "Invalid content type. Must be application/json for POST methods.")
 				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
 			}
-			for key, val := range m {
-				if len(val) == 1 {
-					content[key] = val[0]
-				} else {
-					content[key] = val[0]
-				}
-			}
-			triggerData["content"] = content
-		default:
 			var content interface{}
 			err := json.NewDecoder(r.Body).Decode(&content)
 			if err != nil {
@@ -294,17 +270,22 @@ func newActionHandler(rt *GraphQLTrigger, handler *trigger.Handler) httprouter.H
 					return
 				}
 			}
-			triggerData["content"] = content
+			jsonContent := content.(map[string]interface{})
+			query = jsonContent["query"].(string)
+		} else {
+			err := fmt.Errorf("%v", "HTTP GET and POST are the only supported verbs.")
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
-		// Fix this
+		// Process the request
 		result := graphql.Do(graphql.Params{
 			Schema:        *graphQlSchema,
-			RequestString: queryParams["query"],
+			RequestString: query,
 		})
 
 		if len(result.Errors) > 0 {
-			log.Debugf("REST Trigger Error: %s", result.Errors)
+			log.Debugf("GraphQL Trigger Error: %#v", result.Errors)
 			http.Error(w, result.Errors[0].Error(), http.StatusBadRequest)
 			return
 		}

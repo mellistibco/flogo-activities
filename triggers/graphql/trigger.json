@@ -32,15 +32,11 @@
     ],
     "output": [
       {
-        "name": "resolveParams",
+        "name": "args",
         "type": "any"
       }
     ],
     "reply": [
-      {
-        "name": "code",
-        "type": "integer"
-      },
       {
         "name": "data",
         "type": "any"
@@ -52,7 +48,7 @@
           "name": "method",
           "type": "string",
           "required" : true,
-          "allowed" : ["GET", "POST", "PUT", "PATCH", "DELETE"]
+          "allowed" : ["GET", "POST"]
         },
         {
           "name": "path",
