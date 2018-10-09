@@ -294,7 +294,7 @@ func newActionHandler(rt *GraphQLTrigger, handler *trigger.Handler) httprouter.H
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusOK)
 
-			if err := json.NewEncoder(w).Encode(result.Data); err != nil {
+			if err := json.NewEncoder(w).Encode(result); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				log.Error(err)
 			}
