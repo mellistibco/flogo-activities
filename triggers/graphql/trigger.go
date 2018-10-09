@@ -23,7 +23,6 @@ const (
 // log is the default package logger
 var log = logger.GetLogger("trigger-flogo-graphql")
 
-var validMethods = []string{"GET", "POST"}
 var gqlObjects map[string]*graphql.Object
 var graphQlSchema *graphql.Schema
 
@@ -67,32 +66,13 @@ func (t *GraphQLTrigger) Initialize(ctx trigger.InitContext) error {
 
 	addr := ":" + t.config.GetSetting("port")
 
-	pathMap := make(map[string]string)
-
 	// Build the GraphQL Object Types & Schemas
 	t.buildGraphQLObjects()
 	graphQlSchema = t.buildGraphQLSchema(ctx.GetHandlers())
 
-	// Init handlers
-	for _, handler := range ctx.GetHandlers() {
-
-		err := validateHandler(t.config.Id, handler)
-		if err != nil {
-			return err
-		}
-
-		method := strings.ToUpper(handler.GetStringSetting("method"))
-		path := handler.GetStringSetting("path")
-
-		log.Debugf("Registering handler [%s: %s]", method, path)
-
-		if _, ok := pathMap[path]; !ok {
-			pathMap[path] = path
-			router.OPTIONS(path, handleCorsPreflight) // for CORS
-		}
-
-		router.Handle(method, path, newActionHandler(t, handler))
-	}
+	// Setup routes for the path & verb
+	router.Handle("GET", t.config.GetSetting("path"), newActionHandler(t))
+	router.Handle("POST", t.config.GetSetting("path"), newActionHandler(t))
 
 	log.Debugf("Configured on port %s", t.config.Settings["port"])
 	t.server = NewServer(addr, router)
@@ -224,7 +204,7 @@ func handleCorsPreflight(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 	c.HandlePreflight(w, r)
 }
 
-func newActionHandler(rt *GraphQLTrigger, handler *trigger.Handler) httprouter.Handle {
+func newActionHandler(rt *GraphQLTrigger) httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
@@ -247,7 +227,7 @@ func newActionHandler(rt *GraphQLTrigger, handler *trigger.Handler) httprouter.H
 
 		var query string
 
-		httpVerb := strings.ToUpper(handler.GetStringSetting("method"))
+		httpVerb := strings.ToUpper(r.Method)
 		if val, ok := queryParams["query"]; ok && strings.EqualFold(httpVerb, "GET") {
 			query = val
 		} else if strings.EqualFold(httpVerb, "POST") {
@@ -310,22 +290,6 @@ func coerceType(typ string) *graphql.Scalar {
 	case "graphql.String":
 		return graphql.String
 	}
-
-	return nil
-}
-
-func validateHandler(triggerId string, handler *trigger.Handler) error {
-
-	method := handler.GetStringSetting("method")
-	if method == "" {
-		return fmt.Errorf("no method specified in handler for trigger '%s'", triggerId)
-	}
-
-	if !stringInList(strings.ToUpper(method), validMethods) {
-		return fmt.Errorf("invalid method '%s' specified in handler for trigger '%s'", method, triggerId)
-	}
-
-	//validate path
 
 	return nil
 }

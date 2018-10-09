@@ -11,6 +11,7 @@
       "description": "Simple GraphQL Trigger",
       "settings": {
         "port": 7777,
+        "path": "/graphql",
         "types": [
           {
             "Name": "user",
@@ -92,7 +93,6 @@
           },
           "settings": {
             "method": "GET",
-            "path": "/test",
             "type": "user"
           }
         },
@@ -121,7 +121,6 @@
           },
           "settings": {
             "method": "GET",
-            "path": "/address",
             "type": "address"
           }
         }

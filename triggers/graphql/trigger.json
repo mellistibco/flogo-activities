@@ -28,6 +28,11 @@
         "required": false,
         "value": "QUERY",
         "allowed" : ["QUERY"]
+      },
+      {
+        "name": "path",
+        "type": "string",
+        "required" : true
       }
     ],
     "output": [
@@ -49,11 +54,6 @@
           "type": "string",
           "required" : true,
           "allowed" : ["GET", "POST"]
-        },
-        {
-          "name": "path",
-          "type": "string",
-          "required" : true
         },
         {
           "name": "type",
