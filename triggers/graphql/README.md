@@ -80,6 +80,8 @@ Settings, Outputs and Endpoint:
 |:------------|:---------------|
 | args      | The GraphQL query arguments |
 ### Handler:
+| Setting     | Description    |
+|:------------|:---------------|
 | resolverFor      | Indicates that this handler can resolve the specified GraphQL field. The value here must match a field from the schema. |
 
 ## Example GraphQL Types
@@ -169,7 +171,7 @@ cd bin
 ./Example
 ```
 
-To test the application, set a `GET` request:
+To test the application, send a `GET` request:
 
 ```
 http://localhost:7777/graphql?query={user(id:"Dan"){name,id},address{street,number}}
