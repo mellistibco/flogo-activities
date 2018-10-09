@@ -1,0 +1,69 @@
+{
+    "name": "flogo-graphql",
+    "type": "flogo:trigger",
+    "ref": "github.com/mellistibco/flogo-activities/triggers/graphql",
+    "version": "0.0.1",
+    "title": "Process GraphQL Query",
+    "description": "Simple GraphQL Trigger",
+    "homepage": "github.com/mellistibco/flogo-activities/tree/master/triggers/graphql",
+    "settings": [
+      {
+        "name": "port",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "types",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "schema",
+        "type": "object",
+        "required": true
+      },
+      {
+        "name": "operation",
+        "type": "string",
+        "required": false,
+        "value": "QUERY",
+        "allowed" : ["QUERY"]
+      }
+    ],
+    "output": [
+      {
+        "name": "resolveParams",
+        "type": "any"
+      }
+    ],
+    "reply": [
+      {
+        "name": "code",
+        "type": "integer"
+      },
+      {
+        "name": "data",
+        "type": "any"
+      }
+    ],
+    "handler": {
+      "settings": [
+        {
+          "name": "method",
+          "type": "string",
+          "required" : true,
+          "allowed" : ["GET", "POST", "PUT", "PATCH", "DELETE"]
+        },
+        {
+          "name": "path",
+          "type": "string",
+          "required" : true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "required" : true
+        }
+      ]
+    }
+  }
