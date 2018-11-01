@@ -21,7 +21,12 @@ Inputs and Outputs:
     {
       "name": "csv",
       "type": "string",
-      "required": true
+      "required": false
+    },
+    {
+      "name": "file",
+      "type": "string",
+      "required": false
     }
   ],
   "output": [
@@ -36,7 +41,8 @@ Inputs and Outputs:
 | Setting        | Required | Description |
 |:---------------|:---------|:------------|
 | fieldNames     | True     | The expected fields from the csv (the headers, will be used for the field name in the JSON object.) |         
-| csv            | True     | The csv text (field1,field2,field3)
+| csv            | False     | The csv text (field1,field2,field3)
+| file            | False     | The optional location to a CSV file on disk
 
 ## Example
 The below example will parse the supplied text.
