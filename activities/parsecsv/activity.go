@@ -44,7 +44,7 @@ func (a *ParseCSVActivity) Eval(ctx activity.Context) (done bool, err error) {
 
 	var reader io.Reader
 
-	if txt, ok := ctx.GetInput(ivCSV).(string); ok {
+	if txt, ok := ctx.GetInput(ivCSV).(string); ok && len(txt) > 0 {
 		reader = strings.NewReader(txt)
 	} else if file, ok := ctx.GetInput(ivFile).(string); ok {
 		osFile, err := os.Open(file)
