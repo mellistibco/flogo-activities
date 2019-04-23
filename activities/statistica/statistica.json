@@ -3,7 +3,7 @@
 	"type": "flogo:activity",
 	"ref": "github.com/mellistibco/flogo-activities/activities/statistica",
 	"version": "0.0.1",
-	"title": "Statistica Sample",
+	"title": "StatisticaSample",
 	"description": "My_Model Activity generated from Statistica",
 	"homepage": "http://....",
 	"inputs":[
