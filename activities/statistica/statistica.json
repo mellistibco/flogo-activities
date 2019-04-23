@@ -1,0 +1,42 @@
+{
+	"name": "statistica",
+	"type": "flogo:activity",
+	"ref": "github.com/mellistibco/flogo-activitives/activities/statistica",
+	"version": "0.0.1",
+	"title": "Name of model",
+	"description": "My_Model Activity generated from Statistica",
+	"homepage": "http://....",
+	"inputs":[
+		{
+			"name": "_IsPersonal__",
+			"type": "string",
+			"required": true
+		},
+		{
+			"name": "_IsWork__",
+			"type": "string",
+			"required": true
+		},
+		{
+			"name": "_Contact__",
+			"type": "string",
+			"required": true
+		},
+		{
+			"name": "_Domain__",
+			"type": "string",
+			"required": true
+		},
+		{
+			"name": "_OrgName__",
+			"type": "string",
+			"required": true
+		}
+	],
+	"outputs": [
+		{
+			"name": "result",
+			"type": "any"
+		}
+	]
+}
