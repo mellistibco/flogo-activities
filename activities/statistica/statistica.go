@@ -3,8 +3,8 @@ package statistica
 //
 //#include <string.h>
 //
-//#define STRING_EQUAL(a,b) (_stricmp(a,b)==0)
-//#define STRING_NOT_EQUAL(a,b) (_stricmp(a,b)!=0)
+//#define STRING_EQUAL(a,b) (strcasecmp(a,b)==0)
+//#define STRING_NOT_EQUAL(a,b) (strcasecmp(a,b)!=0)
 //#define STRING_SET(a,b)   strcpy(a,b)
 //
 //
