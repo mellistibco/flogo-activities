@@ -1,0 +1,167 @@
+{
+	"name": "btreesample",
+	"type": "flogo:activity",
+	"ref": "github.com/mellistibco/flogo-activities/activities/btreesample",
+	"version": "0.0.1",
+	"title": "Name of model",
+	"description": "Flogo Activity generated from Statistica",
+	"homepage": "http://...",
+	"inputs":[
+		{
+			"name": "_C1__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C2__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C3__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C4__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C5__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C6__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C7__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C8__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C9__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C10__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C11__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C12__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C13__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C14__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C15__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C16__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C17__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C18__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C19__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C20__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C21__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C22__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C23__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C24__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C25__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C26__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C27__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C28__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C29__",
+			"type": "number",
+			"required": true
+		},
+		{
+			"name": "_C30__",
+			"type": "number",
+			"required": true
+		}
+	],
+	"outputs": [
+		{
+			"name": "result",
+			"type": "any"
+		}
+	]
+}
