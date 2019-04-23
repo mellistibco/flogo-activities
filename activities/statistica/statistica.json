@@ -1,9 +1,9 @@
 {
-	"name": "statistica",
+	"name": "My Model",
 	"type": "flogo:activity",
 	"ref": "github.com/mellistibco/flogo-activities/activities/statistica",
 	"version": "0.0.1",
-	"title": "My_Model",
+	"title": "MyModel",
 	"description": "My_Model Activity generated from Statistica",
 	"homepage": "http://....",
 	"inputs":[
